@@ -510,3 +510,5 @@ tail -f /var/log/nginx/error.log
 <p align="center">
   صُنع بـ ❤️ للمجتمع العربي المطور
 </p>
+#   l o g - v a u l t  
+ 
