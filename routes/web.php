@@ -26,6 +26,25 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::get('projects/{project}/tokens', [ProjectController::class, 'tokens'])->name('projects.tokens.index');
     Route::delete('tokens/{token}', [ProjectController::class, 'revokeToken'])->name('projects.tokens.revoke');
 
+    // إدارة IP Whitelist
+    Route::resource('projects.ip-whitelist', \App\Http\Controllers\Admin\IpWhitelistController::class)
+        ->names([
+            'index' => 'projects.ip-whitelist.index',
+            'create' => 'projects.ip-whitelist.create',
+            'store' => 'projects.ip-whitelist.store',
+            'show' => 'projects.ip-whitelist.show',
+            'edit' => 'projects.ip-whitelist.edit',
+            'update' => 'projects.ip-whitelist.update',
+            'destroy' => 'projects.ip-whitelist.destroy',
+        ]);
+
+    // روابط إضافية لـ IP Whitelist
+    Route::post('ip-whitelist/{ipWhitelist}/toggle-status', [\App\Http\Controllers\Admin\IpWhitelistController::class, 'toggleStatus'])->name('ip-whitelist.toggle-status');
+    Route::post('projects/{project}/ip-whitelist/test', [\App\Http\Controllers\Admin\IpWhitelistController::class, 'testIp'])->name('projects.ip-whitelist.test');
+    Route::get('projects/{project}/ip-whitelist/statistics', [\App\Http\Controllers\Admin\IpWhitelistController::class, 'statistics'])->name('projects.ip-whitelist.statistics');
+    Route::post('projects/{project}/ip-whitelist/import', [\App\Http\Controllers\Admin\IpWhitelistController::class, 'import'])->name('projects.ip-whitelist.import');
+    Route::get('projects/{project}/ip-whitelist/export', [\App\Http\Controllers\Admin\IpWhitelistController::class, 'export'])->name('projects.ip-whitelist.export');
+
     // إدارة السجلات
     Route::resource('logs', \App\Http\Controllers\Admin\LogController::class)->only(['index', 'show', 'destroy']);
     Route::get('logs-export', [\App\Http\Controllers\Admin\LogController::class, 'export'])->name('logs.export');

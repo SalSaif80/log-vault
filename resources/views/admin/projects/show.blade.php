@@ -231,6 +231,98 @@
         </div>
     </div>
 
+    <!-- إدارة IP Whitelist -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        قائمة IP المسموحة
+                    </h5>
+                    <a href="{{ route('admin.projects.ip-whitelist.index', $project) }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-cog me-1"></i>
+                        إدارة عناوين IP
+                    </a>
+                </div>
+                <div class="card-body">
+                    @php
+                        $ipWhitelistCount = $project->ipWhitelist()->count();
+                        $activeIpCount = $project->ipWhitelist()->active()->count();
+                        $recentIps = $project->ipWhitelist()->latest()->limit(3)->get();
+                    @endphp
+
+                    @if($ipWhitelistCount > 0)
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h4 class="text-primary">{{ $ipWhitelistCount }}</h4>
+                                    <small class="text-muted">إجمالي العناوين</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h4 class="text-success">{{ $activeIpCount }}</h4>
+                                    <small class="text-muted">عناوين نشطة</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h4 class="text-warning">{{ $ipWhitelistCount - $activeIpCount }}</h4>
+                                    <small class="text-muted">عناوين معطلة</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if($recentIps->count() > 0)
+                            <h6 class="mb-3">آخر العناوين المضافة:</h6>
+                            @foreach($recentIps as $ip)
+                                <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                    <div>
+                                        <code class="me-2">{{ $ip->ip_address }}</code>
+                                        <span class="badge {{ $ip->status === 'active' ? 'bg-success' : 'bg-secondary' }}">
+                                            {{ $ip->status === 'active' ? 'نشط' : 'معطل' }}
+                                        </span>
+                                        @if($ip->description)
+                                            <br>
+                                            <small class="text-muted">{{ $ip->description }}</small>
+                                        @endif
+                                    </div>
+                                    <small class="text-muted">
+                                        {{ $ip->created_at->diffForHumans() }}
+                                    </small>
+                                </div>
+                            @endforeach
+                        @endif
+
+                        <div class="mt-3">
+                            <a href="{{ route('admin.projects.ip-whitelist.create', $project) }}" class="btn btn-outline-primary btn-sm me-2">
+                                <i class="fas fa-plus me-1"></i>
+                                إضافة IP جديد
+                            </a>
+                            <a href="{{ route('admin.projects.ip-whitelist.index', $project) }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-list me-1"></i>
+                                عرض جميع العناوين
+                            </a>
+                        </div>
+                    @else
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-shield-alt fa-3x mb-3"></i>
+                            <p>لا توجد عناوين IP مسموحة</p>
+                            <small>أضف عناوين IP موثوقة للتحكم في الوصول لـ API هذا المشروع</small>
+                            <div class="mt-3">
+                                <a href="{{ route('admin.projects.ip-whitelist.create', $project) }}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-1"></i>
+                                    إضافة أول عنوان IP
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- آخر السجلات -->
     @if($stats['latest_log'])
         <div class="row">

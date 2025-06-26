@@ -12,10 +12,10 @@
             </div>
             <div>
                 <a href="{{ route('admin.projects.ip-whitelist.create', $project) }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> IP جديد
+                    <i class="fas fa-plus me-2"></i>IP جديد
                 </a>
                 <a href="{{ route('admin.projects.show', $project) }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-right"></i> العودة
+                    <i class="fas fa-arrow-right me-2"></i>العودة
                 </a>
             </div>
         </div>
@@ -93,8 +93,8 @@
         @else
             <div class="text-center py-5">
                 <i class="fas fa-shield-alt fa-4x text-muted mb-3"></i>
-                <h4 class="text-muted">لا توجد عناوين IP</h4>
-                <p class="text-muted mb-4">ابدأ بإضافة عناوين IP للتحكم في الوصول للAPI</p>
+                <h4 class="text-muted">لا توجد عناوين IP مسموحة</h4>
+                <p class="text-muted mb-4">أضف عناوين IP الموثوقة للتحكم في الوصول لـ API هذا المشروع</p>
                 <a href="{{ route('admin.projects.ip-whitelist.create', $project) }}" class="btn btn-primary btn-lg">
                     <i class="fas fa-plus"></i> إضافة عنوان IP جديد
                 </a>
@@ -105,22 +105,23 @@
         <div class="alert alert-info mt-4">
             <h6 class="alert-heading">
                 <i class="fas fa-info-circle me-2"></i>
-                أنماط عناوين IP المدعومة
+                نصائح لعناوين IP
             </h6>
             <div class="row">
-                <div class="col-md-4 mb-2">
-                    <strong>IP مباشر:</strong> <code>192.168.1.100</code>
-                    <br><small>عنوان محدد واحد فقط</small>
+                <div class="col-md-6 mb-2">
+                    <strong>عناوين IPv4:</strong> <code>192.168.1.100</code>
+                    <br><small>الأكثر شيوعاً واستخداماً</small>
                 </div>
-                <div class="col-md-4 mb-2">
-                    <strong>CIDR:</strong> <code>192.168.1.0/24</code>
-                    <br><small>مجموعة عناوين في شبكة</small>
-                </div>
-                <div class="col-md-4 mb-2">
-                    <strong>Wildcard:</strong> <code>192.168.1.*</code>
-                    <br><small>عناوين بنمط تحديد</small>
+                <div class="col-md-6 mb-2">
+                    <strong>عناوين IPv6:</strong> <code>2001:db8::1</code>
+                    <br><small>الجيل الجديد من عناوين IP</small>
                 </div>
             </div>
+            <hr>
+            <small class="text-muted">
+                <i class="fas fa-shield-alt me-1"></i>
+                أضف فقط عناوين IP الموثوقة لضمان أمان نظامك
+            </small>
         </div>
     </div>
 

@@ -72,6 +72,14 @@ class Project extends Model
     }
 
     /**
+     * العلاقة مع IP Whitelist
+     */
+    public function ipWhitelist()
+    {
+        return $this->hasMany(\App\Models\IpWhitelist::class);
+    }
+
+    /**
      * إحصائيات بسيطة للمشروع
      */
     public function getStatsAttribute()
