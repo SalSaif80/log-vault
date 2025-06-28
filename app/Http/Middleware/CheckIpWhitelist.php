@@ -27,7 +27,7 @@ class CheckIpWhitelist
                 return response()->json([
                     'success' => false,
                     'message' => 'عذراً، عنوان IP الخاص بك غير مسموح.',
-
+                    'clientIp' => $clientIp,
                 ], 403);
             }
 
