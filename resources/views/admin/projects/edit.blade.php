@@ -100,12 +100,12 @@
                     <div class="col-md-6">
                         <ul class="list-unstyled mb-0">
                             <li><strong>الرمز:</strong> <code>{{ $project->slug }}</code></li>
-                            <li><strong>التوكنات:</strong> {{ $project->tokens()->count() }}</li>
+                            {{-- <li><strong>التوكنات:</strong> {{ $project->tokens()->count() }}</li> --}}
                         </ul>
                     </div>
                     <div class="col-md-6">
                         <ul class="list-unstyled mb-0">
-                            <li><strong>عناوين IP:</strong> {{ $project->ipWhitelist()->count() }}</li>
+
                             <li><strong>آخر تحديث:</strong> {{ $project->updated_at->format('Y-m-d') }}</li>
                         </ul>
                     </div>

@@ -36,18 +36,6 @@
             font-size: 1.4rem;
         }
 
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.08);
-            margin-bottom: 1.5rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 25px rgba(0,0,0,0.12);
-        }
 
         .btn {
             border-radius: 8px;

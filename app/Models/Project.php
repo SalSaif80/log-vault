@@ -52,13 +52,21 @@ class Project extends Model
         return $this->status === 'active';
     }
 
+
     /**
-     * الحصول على إحصائيات السجلات المرتبطة بهذا المشروع عبر source_system
-     * (إذا كان اسم المشروع يطابق source_system)
+     * العلاقة مع السجلات
+     */
+    public function logs()
+    {
+        return $this->hasMany(\App\Models\Log::class);
+    }
+
+    /**
+     * الحصول على إحصائيات السجلات المرتبطة بهذا المشروع
      */
     public function getLogsCountAttribute()
     {
-        return \App\Models\Log::where('source_system', $this->slug)->count();
+        return $this->logs()->count();
     }
 
     /**
@@ -66,17 +74,7 @@ class Project extends Model
      */
     public function getLatestLogAttribute()
     {
-        return \App\Models\Log::where('source_system', $this->slug)
-            ->latest('created_at')
-            ->first();
-    }
-
-    /**
-     * العلاقة مع IP Whitelist
-     */
-    public function ipWhitelist()
-    {
-        return $this->hasMany(\App\Models\IpWhitelist::class);
+        return $this->logs()->latest('occurred_at')->first();
     }
 
     /**
@@ -84,16 +82,11 @@ class Project extends Model
      */
     public function getStatsAttribute()
     {
-        $sourceSystem = $this->slug;
-
         return [
-            'total_logs' => \App\Models\Log::where('source_system', $sourceSystem)->count(),
-            'today_logs' => \App\Models\Log::where('source_system', $sourceSystem)
-                ->whereDate('created_at', today())->count(),
-            'week_logs' => \App\Models\Log::where('source_system', $sourceSystem)
-                ->where('created_at', '>=', now()->subWeek())->count(),
-            'latest_log' => \App\Models\Log::where('source_system', $sourceSystem)
-                ->latest('created_at')->first(),
+            'total_logs' => $this->logs()->count(),
+            'today_logs' => $this->logs()->whereDate('occurred_at', today())->count(),
+            'week_logs' => $this->logs()->where('occurred_at', '>=', now()->subWeek())->count(),
+            'latest_log' => $this->logs()->latest('occurred_at')->first(),
         ];
     }
 }

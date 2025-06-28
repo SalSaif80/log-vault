@@ -17,14 +17,7 @@
                         <i class="fas fa-arrow-right me-1"></i>
                         العودة للقائمة
                     </a>
-                    <form action="{{ route('admin.logs.destroy', $log) }}" method="POST" class="d-inline ms-2" onsubmit="return confirm('هل أنت متأكد من حذف هذا السجل؟')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash me-1"></i>
-                            حذف السجل
-                        </button>
-                    </form>
+                    @include('admin.logs.modal.delete_log', ['log' => $log])
                 </div>
             </div>
         </div>
@@ -43,7 +36,7 @@
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label fw-bold">رقم السجل الخارجي:</label>
+                            <label class="form-label fw-bold">رقم السجل للمشروع:</label>
                             <div>
                                 <span class="badge bg-dark fs-6">#{{ $log->external_log_id }}</span>
                             </div>
@@ -333,7 +326,7 @@
                         <div class="col-md-3">
                             <label class="form-label fw-bold">الفرق الزمني:</label>
                             <div>
-                                <small class="text-muted">{{ $log->created_at->diffForHumans() }}</small>
+                                <small class="text-muted">{{ $log->created_at->diffForHumans(['locale' => 'ar']) }}</small>
                             </div>
                         </div>
                     </div>

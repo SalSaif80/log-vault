@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\ApiToken;
-use App\Models\IpWhitelist;
+
 use App\Models\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;

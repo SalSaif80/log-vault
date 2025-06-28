@@ -15,11 +15,15 @@ class LogController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Log::orderBy('occurred_at', 'desc');
+        $query = Log::with('project')->orderBy('occurred_at', 'desc');
 
         // تطبيق الفلاتر
         if ($request->filled('source_system')) {
             $query->where('source_system', $request->source_system);
+        }
+
+        if ($request->filled('project_id')) {
+            $query->where('project_id', $request->project_id);
         }
 
         if ($request->filled('project_name')) {
@@ -44,21 +48,22 @@ class LogController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('description', 'like', "%{$search}%")
-                  ->orWhere('subject_type', 'like', "%{$search}%")
-                  ->orWhere('causer_type', 'like', "%{$search}%")
-                  ->orWhere('source_system', 'like', "%{$search}%")
-                  ->orWhere('project_name', 'like', "%{$search}%")
-                  ->orWhere('log_name', 'like', "%{$search}%")
-                  ->orWhereJsonContains('properties->attributes->name', $search)
-                  ->orWhereJsonContains('properties->attributes->course_name', $search);
+                    ->orWhere('subject_type', 'like', "%{$search}%")
+                    ->orWhere('causer_type', 'like', "%{$search}%")
+                    ->orWhere('source_system', 'like', "%{$search}%")
+                    ->orWhere('project_name', 'like', "%{$search}%")
+                    ->orWhere('log_name', 'like', "%{$search}%")
+                    ->orWhereJsonContains('properties->attributes->name', $search)
+                    ->orWhereJsonContains('properties->attributes->course_name', $search);
             });
         }
 
         $logs = $query->paginate(25)->withQueryString();
 
-        // جلب الأنظمة المصدر للفلتر
+        // جلب المشاريع والأنظمة المصدر للفلاتر
+        $projects = Project::orderBy('name')->get();
         $sourceSystems = Log::distinct()->pluck('source_system')->filter()->sort();
 
         // إحصائيات سريعة
@@ -69,8 +74,7 @@ class LogController extends Controller
             'active_systems' => Log::distinct()->count('source_system'),
         ];
 
-
-        return view('admin.logs.index', compact('logs', 'sourceSystems', 'stats'));
+        return view('admin.logs.index', compact('logs', 'projects', 'sourceSystems', 'stats'));
     }
 
     /**
@@ -92,36 +96,7 @@ class LogController extends Controller
             ->with('success', 'تم حذف السجل بنجاح');
     }
 
-    /**
-     * الحصول على إحصائيات السجلات لنظام مصدر معين
-     */
-    public function sourceSystemStats(Request $request, $sourceSystem)
-    {
-        $period = $request->get('period', '30'); // آخر 30 يوم افتراضياً
 
-        $query = Log::where('source_system', $sourceSystem)
-            ->where('occurred_at', '>=', now()->subDays($period));
-
-        $stats = [
-            'total_logs' => $query->count(),
-            'events_distribution' => $query->groupBy('event')
-                ->selectRaw('event, count(*) as count')
-                ->get()
-                ->pluck('count', 'event'),
-            'daily_logs' => $query->selectRaw('DATE(occurred_at) as date, count(*) as count')
-                ->groupBy('date')
-                ->orderBy('date')
-                ->get(),
-            'top_subjects' => $query->whereNotNull('subject_type')
-                ->groupBy('subject_type')
-                ->selectRaw('subject_type, count(*) as count')
-                ->orderBy('count', 'desc')
-                ->limit(10)
-                ->get(),
-        ];
-
-        return response()->json($stats);
-    }
 
     /**
      * تصدير السجلات
@@ -164,11 +139,11 @@ class LogController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
-        $callback = function() use ($logs) {
+        $callback = function () use ($logs) {
             $file = fopen('php://output', 'w');
 
             // إضافة BOM لدعم UTF-8 في Excel
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
             // إضافة headers
             fputcsv($file, [

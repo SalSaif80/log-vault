@@ -12,7 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        // تسجيل middleware للتحقق من IP whitelist
+        $middleware->alias([
+            'ip.whitelist' => \App\Http\Middleware\CheckIpWhitelist::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

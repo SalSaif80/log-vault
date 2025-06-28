@@ -13,14 +13,11 @@
                     إدارة السجلات
                 </h1>
                 <div class="btn-group">
-                    <a href="{{ route('admin.logs.export', request()->query()) }}" class="btn btn-success">
+                    <a href="{{ route('admin.logs.export', request()->query()) }}" class="btn btn-success rounded-0">
                         <i class="fas fa-download me-1"></i>
                         تصدير السجلات
                     </a>
-                    <button type="button" class="btn btn-info" onclick="location.reload()">
-                        <i class="fas fa-sync-alt me-1"></i>
-                        تحديث
-                    </button>
+
                 </div>
             </div>
 
@@ -99,77 +96,107 @@
             </h5>
         </div>
         <div class="card-body">
-            <form method="GET" action="{{ route('admin.logs.index') }}">
-                <div class="row g-3">
-                    <div class="col-md-2">
-                        <label for="source_system" class="form-label">النظام المصدر</label>
-                        <select name="source_system" id="source_system" class="form-select">
-                            <option value="">جميع الأنظمة</option>
-                            @foreach($sourceSystems as $system)
-                                <option value="{{ $system }}" {{ request('source_system') == $system ? 'selected' : '' }}>
-                                    {{ $system }}
-                                </option>
-                            @endforeach
-                        </select>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">
+                    <i class="fas fa-filter me-2"></i>
+                    فلاتر البحث والتصفية
+                </h6>
+                <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#filtersCollapse" aria-expanded="false" aria-controls="filtersCollapse">
+                    <i class="fas fa-chevron-down me-1"></i>
+                    إظهار/إخفاء الفلاتر
+                </button>
+            </div>
+
+            <div class="collapse" id="filtersCollapse">
+                <form method="GET" action="{{ route('admin.logs.index') }}">
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label for="project_id" class="form-label">المشروع</label>
+                            <select name="project_id" id="project_id" class="form-select">
+                                <option value="">جميع المشاريع</option>
+                                @foreach($projects as $project)
+                                    <option value="{{ $project->id }}" {{ request('project_id') == $project->id ? 'selected' : '' }}>
+                                        {{ $project->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="source_system" class="form-label">النظام المصدر</label>
+                            <select name="source_system" id="source_system" class="form-select">
+                                <option value="">جميع الأنظمة</option>
+                                @foreach($sourceSystems as $system)
+                                    <option value="{{ $system }}" {{ request('source_system') == $system ? 'selected' : '' }}>
+                                        {{ $system }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="project_name" class="form-label">اسم المشروع</label>
+                            <select name="project_name" id="project_name" class="form-select">
+                                <option value="">جميع المشاريع</option>
+                                @php
+                                    $projects = $logs->pluck('project_name')->unique()->filter()->sort();
+                                @endphp
+                                @foreach($projects as $project)
+                                    <option value="{{ $project }}" {{ request('project_name') == $project ? 'selected' : '' }}>
+                                        {{ $project }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="event" class="form-label">نوع الحدث</label>
+                            <select name="event" id="event" class="form-select">
+                                <option value="">جميع الأحداث</option>
+                                <option value="created" {{ request('event') == 'created' ? 'selected' : '' }}>إنشاء</option>
+                                <option value="updated" {{ request('event') == 'updated' ? 'selected' : '' }}>تحديث</option>
+                                <option value="deleted" {{ request('event') == 'deleted' ? 'selected' : '' }}>حذف</option>
+                                <option value="login" {{ request('event') == 'login' ? 'selected' : '' }}>تسجيل دخول</option>
+                                <option value="logout" {{ request('event') == 'logout' ? 'selected' : '' }}>تسجيل خروج</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="subject_type" class="form-label">نوع العنصر</label>
+                            <select name="subject_type" id="subject_type" class="form-select">
+                                <option value="">جميع الأنواع</option>
+                                <option value="App\Models\User" {{ request('subject_type') == 'App\Models\User' ? 'selected' : '' }}>مستخدم</option>
+                                <option value="App\Models\Course" {{ request('subject_type') == 'App\Models\Course' ? 'selected' : '' }}>كورس</option>
+                                <option value="App\Models\Enrollment" {{ request('subject_type') == 'App\Models\Enrollment' ? 'selected' : '' }}>تسجيل</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="start_date" class="form-label">من تاريخ</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="end_date" class="form-label">إلى تاريخ</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="search" class="form-label">بحث عام في النص</label>
+                            <input type="text" name="search" id="search" class="form-control" value="{{ request('search') }}" placeholder="البحث في الوصف، أسماء المستخدمين، أو تفاصيل الأحداث...">
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-search me-1"></i>
+                                بحث وتصفية
+                            </button>
+                            <a href="{{ route('admin.logs.index') }}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-times me-1"></i>
+                                إلغاء الفلاتر
+                            </a>
+                            @if(request('project_id'))
+                                <a href="{{ route('admin.projects.show', request('project_id')) }}" class="btn btn-info">
+                                    <i class="fas fa-folder me-1"></i>
+                                    عرض المشروع
+                                </a>
+                            @endif
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <label for="project_name" class="form-label">اسم المشروع</label>
-                        <select name="project_name" id="project_name" class="form-select">
-                            <option value="">جميع المشاريع</option>
-                            @php
-                                $projects = $logs->pluck('project_name')->unique()->filter()->sort();
-                            @endphp
-                            @foreach($projects as $project)
-                                <option value="{{ $project }}" {{ request('project_name') == $project ? 'selected' : '' }}>
-                                    {{ $project }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="event" class="form-label">نوع الحدث</label>
-                        <select name="event" id="event" class="form-select">
-                            <option value="">جميع الأحداث</option>
-                            <option value="created" {{ request('event') == 'created' ? 'selected' : '' }}>إنشاء</option>
-                            <option value="updated" {{ request('event') == 'updated' ? 'selected' : '' }}>تحديث</option>
-                            <option value="deleted" {{ request('event') == 'deleted' ? 'selected' : '' }}>حذف</option>
-                            <option value="login" {{ request('event') == 'login' ? 'selected' : '' }}>تسجيل دخول</option>
-                            <option value="logout" {{ request('event') == 'logout' ? 'selected' : '' }}>تسجيل خروج</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="subject_type" class="form-label">نوع العنصر</label>
-                        <select name="subject_type" id="subject_type" class="form-select">
-                            <option value="">جميع الأنواع</option>
-                            <option value="App\Models\User" {{ request('subject_type') == 'App\Models\User' ? 'selected' : '' }}>مستخدم</option>
-                            <option value="App\Models\Course" {{ request('subject_type') == 'App\Models\Course' ? 'selected' : '' }}>كورس</option>
-                            <option value="App\Models\Enrollment" {{ request('subject_type') == 'App\Models\Enrollment' ? 'selected' : '' }}>تسجيل</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="start_date" class="form-label">من تاريخ</label>
-                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
-                    </div>
-                    <div class="col-md-2">
-                        <label for="end_date" class="form-label">إلى تاريخ</label>
-                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
-                    </div>
-                    <div class="col-md-8">
-                        <label for="search" class="form-label">بحث عام في النص</label>
-                        <input type="text" name="search" id="search" class="form-control" value="{{ request('search') }}" placeholder="البحث في الوصف، أسماء المستخدمين، أو تفاصيل الأحداث...">
-                    </div>
-                    <div class="col-md-4 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary me-2">
-                            <i class="fas fa-search me-1"></i>
-                            بحث وتصفية
-                        </button>
-                        <a href="{{ route('admin.logs.index') }}" class="btn btn-outline-secondary">
-                            <i class="fas fa-times me-1"></i>
-                            إلغاء الفلاتر
-                        </a>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -187,7 +214,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th width="8%">رقم السجل</th>
-                                <th width="8%">رقم السجل الخارجي</th>
+                                <th width="8%">رقم السجل للمشروع</th>
                                 <th width="12%">المشروع/النظام</th>
                                 <th width="35%">تفاصيل الحدث</th>
                                 <th width="15%">العنصر المتأثر</th>
@@ -207,10 +234,18 @@
                                     </td>
                                     <td>
                                         <div>
-                                            <span class="badge bg-primary mb-1">{{ $log->source_system }}</span>
-                                            @if($log->project_name)
+                                            @if($log->project)
+                                                <a href="{{ route('admin.projects.show', $log->project) }}" class="badge bg-primary text-decoration-none mb-1">
+                                                    {{ $log->project->name }}
+                                                </a>
                                                 <br>
-                                                <small class="text-muted">{{ $log->project_name }}</small>
+                                                <small class="text-muted">{{ $log->source_system }}</small>
+                                            @else
+                                                <span class="badge bg-secondary mb-1">{{ $log->source_system }}</span>
+                                                @if($log->project_name)
+                                                    <br>
+                                                    <small class="text-muted">{{ $log->project_name }}</small>
+                                                @endif
                                             @endif
                                         </div>
                                     </td>
@@ -290,15 +325,8 @@
                                             <a href="{{ route('admin.logs.show', $log) }}" class="btn btn-outline-primary" title="عرض التفاصيل">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <form action="{{ route('admin.logs.destroy', $log) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-outline-danger"
-                                                        onclick="return confirm('هل أنت متأكد من حذف هذا السجل؟')"
-                                                        title="حذف">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
+                                            &nbsp;
+                                            @include('admin.logs.modal.delete_log', ['log' => $log])
                                         </div>
                                     </td>
                                 </tr>
@@ -322,14 +350,3 @@
     </div>
 </div>
 @endsection
-
-@push('styles')
-<style>
-.table td {
-    vertical-align: middle;
-}
-.badge {
-    font-size: 0.75em;
-}
-</style>
-@endpush

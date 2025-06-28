@@ -47,27 +47,4 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * إنشاء توكن API جديد للمشروع
-     */
-    public function createApiToken($name = 'API Token', $abilities = ['*'])
-    {
-        return $this->createToken($name, $abilities);
-    }
-
-    /**
-     * إبطال جميع التوكنات
-     */
-    public function revokeAllTokens()
-    {
-        return $this->tokens()->delete();
-    }
-
-    /**
-     * الحصول على التوكنات النشطة
-     */
-    public function activeTokens()
-    {
-        return $this->tokens()->where('expires_at', '>', now())->orWhereNull('expires_at');
-    }
 }

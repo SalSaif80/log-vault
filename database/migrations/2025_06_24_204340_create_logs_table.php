@@ -16,15 +16,17 @@ return new class extends Migration
             $table->unsignedBigInteger('external_log_id');
             $table->string('log_name')->nullable();
             $table->text('description');
-            $table->string('subject_type')->nullable();  // ✅ مبسط
-            $table->unsignedBigInteger('subject_id')->nullable();  // ✅ مبسط
+            $table->string('subject_type')->nullable();
+            $table->unsignedBigInteger('subject_id')->nullable();
             $table->string('event')->nullable();
-            $table->string('causer_type')->nullable();  // ✅ مبسط
-            $table->unsignedBigInteger('causer_id')->nullable();  // ✅ مبسط
+            $table->string('causer_type')->nullable();
+            $table->unsignedBigInteger('causer_id')->nullable();
             $table->string('batch_uuid')->nullable();
             $table->json('properties')->nullable();
             $table->string('source_system');
-            $table->string('project_name');  // ✅ إضافة جديدة
+            $table->string('project_name');
+            $table->unsignedBigInteger('project_id')->nullable();
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('set null');
             $table->timestamp('occurred_at');
             $table->timestamps();
 

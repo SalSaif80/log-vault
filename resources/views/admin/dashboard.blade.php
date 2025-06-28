@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'الداشبورد')
+@section('title', 'لوحة التحكم')
 
 @section('content')
 <div class="container-fluid">
@@ -44,15 +44,6 @@
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-list-alt fa-2x text-warning mb-2"></i>
-                    <h3 class="text-warning">{{ number_format($stats['total_logs']) }}</h3>
-                    <p class="text-muted mb-0">إجمالي السجلات</p>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Activity Overview -->
@@ -82,7 +73,7 @@
                 <div class="card-body text-center">
                     <i class="fas fa-server fa-2x text-primary mb-2"></i>
                     <h4 class="text-primary">{{ number_format($stats['source_systems']) }}</h4>
-                    <p class="text-muted mb-0">الأنظمة المصدر</p>
+                    <p class="text-muted mb-0">المشاريع التي ترسل السجلات</p>
                 </div>
             </div>
         </div>
@@ -160,7 +151,7 @@
                                     @endif
                                     <br>
                                     <small class="text-muted">
-                                        {{ $log->created_at->diffForHumans() }}
+                                        {{ $log->created_at->diffForHumans(['locale' => 'ar']) }}
                                         @if($log->description)
                                             • {{ Str::limit($log->description, 30) }}
                                         @endif
@@ -204,23 +195,12 @@
                             </a>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <a href="{{ route('admin.logs.index') }}" class="btn btn-outline-info w-100">
+                            <a href="{{ route('admin.logs.index') }}" class="btn btn-outline-danger w-100">
                                 <i class="fas fa-list-alt fa-2x mb-2 d-block"></i>
                                 استعراض السجلات
                             </a>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="/api/generate-token" target="_blank" class="btn btn-outline-success w-100">
-                                <i class="fas fa-key fa-2x mb-2 d-block"></i>
-                                توليد توكن تجريبي
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="/api/health" target="_blank" class="btn btn-outline-warning w-100">
-                                <i class="fas fa-heartbeat fa-2x mb-2 d-block"></i>
-                                فحص حالة API
-                            </a>
-                        </div>
+
                     </div>
                 </div>
             </div>
