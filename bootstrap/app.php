@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // تسجيل middleware للتحقق من IP whitelist
         $middleware->alias([
             'ip.whitelist' => \App\Http\Middleware\CheckIpWhitelist::class,
+            'validate.project.token' => \App\Http\Middleware\ValidateProjectToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

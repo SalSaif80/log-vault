@@ -19,9 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/logs/batch', [LogController::class, 'storeBatch']);
-// API للسجلات - يتطلب Sanctum authentication و IP whitelist
-Route::middleware(['auth:sanctum', 'ip.whitelist'])->group(function () {
+// API للسجلات - يتطلب project token validation (يتضمن auth) و IP whitelist
+Route::middleware(['validate.project.token', 'ip.whitelist'])->group(function () {
 
-    // استقبال دفعة من السجلات (الاستخدام الأساسي)
+    Route::post('/logs/batch', [LogController::class, 'storeBatch']);
+    
 });
